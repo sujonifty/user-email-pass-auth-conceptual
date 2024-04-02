@@ -4,6 +4,7 @@ import { authContext } from "../AuthProvider/AuthProvider";
 
 const Register = () => {
     const [error, setError] = useState('');
+    const [success, setSuccess] = useState('');
     const [mailError, setMailError] = useState('');
     /*
     const authInfo=useContext(authContext);
@@ -11,7 +12,7 @@ const Register = () => {
     const {registerUser}=authInfo;
     */
     //akbare distructure kore nesi
-    const { registerUser } = useContext(authContext);
+    const { registerUser, user, setUser } = useContext(authContext);
     // console.log(registerUser)
 
 
@@ -55,13 +56,21 @@ const Register = () => {
                 !@#$%&* => Special characters to be matched.
                 This regex pattern will match any string that contains at least one of the specified special characters !@#$%&*
         */
-        if (!/!@#$%&*/.test(password)) {
-            setError('password must at least 1 special character[!@#$%&*]');
-            return;
-        }
+        // if (!/!@#$%&*/.test(password)) {
+        //     setError('password must at least 1 special character[!@#$%&*]');
+        //     return;
+        // }
 
         //jehetu resgisterUser akta function tai ata k call korte hobi
-        registerUser(email, password);
+        registerUser(email, password)
+        .then((result)=>{
+            setUser(result.user);
+            console.log(result.user);
+            setSuccess('Register successfully.')
+        })
+        .catch((error)=>{
+            setError(error.message);
+        })
     }
 
 
@@ -111,6 +120,9 @@ const Register = () => {
                             }
                             {
                                 mailError && <small className="text-red-700">{mailError}</small>
+                            }
+                            {
+                                success && <small className="text-green-700">{success}</small>
                             }
                             <div className="form-control mt-6">
                                 <button className="btn btn-primary">Login</button>

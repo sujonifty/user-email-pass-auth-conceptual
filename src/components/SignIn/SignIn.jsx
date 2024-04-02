@@ -1,19 +1,44 @@
-import { useContext } from "react";
+import { useContext, useState } from "react";
 import { authContext } from "../AuthProvider/AuthProvider";
 
 
 
 const SignIn = () => {
-    const {signInUser} = useContext(authContext);
+    const [error, setError]=useState('');
+    const [success, setSuccess]=useState('')
+    const {signInUser,googleLogIn} = useContext(authContext);
     // console.log(signInUser);
     const handleSignIn=(e)=>{
         e.preventDefault();
         const email = e.target.email.value;
         const password = e.target.password.value;
         console.log(email, password);
+
+        //clean previous message.
+        setError('');
+        setSuccess('');
+
         signInUser(email, password)
+        .then((result)=>{
+            console.log(result.user);
+            setSuccess('Log In successfully.')
+        })
+        .catch((error)=>{
+            setError(error);
+        })
     }
-    
+    // logIn by google provider
+    const handleGoogleSignIn=()=>{
+        googleLogIn()
+        .then((result)=>{
+            console.log(result.user);
+            setSuccess('Log In successfully.')
+        })
+        .catch((error)=>{
+            setError(error);
+        })
+
+    }
     return (
         <div>
             <div className="hero min-h-screen bg-base-200">
@@ -44,7 +69,17 @@ const SignIn = () => {
                             <div className="form-control mt-6">
                                 <button className="btn btn-primary">Sign-In</button>
                             </div>
+                            <div className="form-control mt-6">
+                                <button onClick={handleGoogleSignIn} className="btn btn-success">Google LogIn</button>
+                            </div>
+                            {
+                                error && <small className="text-red-600">{error}</small>
+                            }
+                            {
+                                success && <small className="text-green-600">{success}</small>
+                            }
                         </form>
+                        
                     </div>
                 </div>
             </div>
